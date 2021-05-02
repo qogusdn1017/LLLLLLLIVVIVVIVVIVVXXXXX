@@ -1,0 +1,12 @@
+name: LLLLLLLIVVIVVIVVIVVXXXXX
+main: com.baehyeonwoo.lllllllivvivvivvivvxxxxx.HardenedPluginMain
+version: 0.1
+api-version: 1.16
+depend: [Tap]
+author: BaeHyeonWoo
+description: "Hardened Survival Plugin for komq. Special thanks to PatrickKR(https://github.com/patrick-mc)."
+website: "https://baehyeonwoo.com/"
+commands:
+  lvx:
+    description: "LVX Debug command"
+    usage: "/lvx checkdebug | checkresx | cancelallscheduler | ending | stopending | msgtask | event | cancelevent"
