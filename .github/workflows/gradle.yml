@@ -25,4 +25,13 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew shadowJar
+    - name: artifact
+      uses: actions/upload-artifact@v2.2.2
+      with:
+            name: Plugin
+    # Artifact nam
+    # A file, directory or wildcard pattern that describes what to upload
+            path: ./build/libs
+    # The desired behavior if no files are found using the provided path.
+
     
