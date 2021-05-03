@@ -145,19 +145,20 @@ class EndingScheduler : Runnable {
             }
             81-> {
                 Bukkit.getOnlinePlayers().forEach {
+                    it.sendMessage(Component.text().content("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n").build()) // Chat Cleanup
                     it.sendMessage(Component.text().content("LLLLLLLIVVIVVIVVIVVXXXXX Plugin").build())
                     it.sendMessage(Component.text().content("by BaeHyeonWoo\n").build())
                     it.sendMessage(Component.text().content("제작자 소셜:\n").build())
                     it.sendMessage(Component.text().content("Twitter: @qogusdn1017").build())
                     it.sendMessage(Component.text().content("GitHub: https://github.com/qogusdn1017\n").build())
-                    it.sendMessage(Component.text().content("특별히 감사한 분들:\n").build())
-                    it.sendMessage(Component.text().content("코마님, 이 플러그인을 플레이 해주신 분").build())
-                    it.sendMessage(Component.text().content("PatrickKR님, 코드에 도움을 주신분 (https://github.com/patrick-mc)").build())
+                    it.sendMessage(Component.text().content("도움을 주신 분들:\n").build())
+                    it.sendMessage(Component.text().content("코마님 / 플러그인 플레이").build())
+                    it.sendMessage(Component.text().content("PatrickKR / 코드에 도움을 주심 (https://github.com/patrick-mc)").build())
+                    it.sendMessage(Component.text().content("Twitter / 대기해주신 유저 분들").build())
                     it.sendMessage(Component.text().content("마지막으로 영상을 시청해 주신 시청자 분들.\n").build())
                     it.sendMessage(Component.text().content("모두 감사드립니다.\n\n").build())
                     it.sendMessage(Component.text().content("코마님의 구독자 10만명을 다시한번 진심으로 축하드립니다!\n\n").build())
                     it.sendMessage(Component.text().content("- Hyeon.\n\n").build())
-                    it.sendMessage(Component.text().content("추신: \"진짜 모험\"의 이야기로 만들어질 \"코마의 모험\"을 기대해주세요! 현재 제작중이랍니다 :D").build())
                     it.sendTitle("", "${ChatColor.GRAY}\"그의 첫 여정이 끝나자, 세계는 기다렸다는 듯이 모든 시련을 없애주었다.\"", 0, 150, 0)
                     it.removePotionEffect(PotionEffectType.SLOW)
                     it.removePotionEffect(PotionEffectType.BLINDNESS)
