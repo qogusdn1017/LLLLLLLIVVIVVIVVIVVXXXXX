@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2021 BaeHyeonWoo
+ *
+ *  Licensed under the General Public License, Version 3.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * https://opensource.org/licenses/gpl-3.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.baehyeonwoo.lllllllivvivvivvivvxxxxx.debugcommands
 
 import com.baehyeonwoo.lllllllivvivvivvivvxxxxx.EndingScheduler
@@ -6,6 +22,7 @@ import com.baehyeonwoo.lllllllivvivvivvivvxxxxx.HardenedPluginMain
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextColor
 import org.bukkit.Bukkit
+import org.bukkit.ChatColor
 import org.bukkit.Sound
 import org.bukkit.SoundCategory
 import org.bukkit.command.Command
@@ -20,7 +37,7 @@ import java.io.File
 
 class LVXCommands : CommandExecutor, TabCompleter {
 
-    private var debugconfig = YamlConfiguration.loadConfiguration(File(getInstance().dataFolder, "debug.yml"))
+    private var debugconfig = YamlConfiguration.loadConfiguration(File(getInstance().dataFolder, "config.yml"))
     private var debugmode = debugconfig.getBoolean("debug-mode")
 
     private fun getInstance(): Plugin {
@@ -106,20 +123,20 @@ class LVXCommands : CommandExecutor, TabCompleter {
                                         HandlerList.unregisterAll(getInstance())
                                     }
                                 }
-                                else -> sender.sendMessage(Component.text().color(TextColor.color(0xFF0000)).content("/lvx checkdebug | checkresx | cancelallscheduler | ending | stopending | msgtask | event | cancelevent"))
+                                else -> sender.sendMessage("${ChatColor.RED}/lvx checkdebug | checkresx | cancelallscheduler | ending | stopending | msgtask | event | cancelevent")
                             }
                         }
                     }
                     else {
-                        sender.sendMessage(Component.text().color(TextColor.color(0xff0000)).content("You cannot perform this action unless debug mode is enabled. Please enable debug-mode in \"debug.yml.\"").build())
+                        sender.sendMessage("${ChatColor.RED}You cannot perform this action unless debug mode is enabled. Please enable debug-mode in \"config.yml.\"")
                     }
                 }
                 else {
-                    sender.sendMessage(Component.text().color(TextColor.color(0xff0000)).content("You don't have permission to perform this command.").build())
+                    sender.sendMessage("${ChatColor.RED}You don't have permission to perform this command.")
                 }
             }
             else {
-                sender.sendMessage(Component.text().color(TextColor.color(0xFF0000)).content("/lvx checkdebug | checkresx | cancelallscheduler | ending | stopending | msgtask | event | cancelevent"))
+                sender.sendMessage("${ChatColor.RED}/lvx checkdebug | checkresx | cancelallscheduler | ending | stopending | msgtask | event | cancelevent")
             }
         }
         else {

@@ -22,6 +22,7 @@ import io.papermc.paper.event.player.AsyncChatEvent
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextColor
 import org.bukkit.*
+import org.bukkit.Bukkit.getLogger
 import org.bukkit.Bukkit.getScheduler
 import org.bukkit.block.data.type.Bed
 import org.bukkit.configuration.file.YamlConfiguration
@@ -41,7 +42,6 @@ import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
 import java.io.File
 import java.util.*
-import kotlin.collections.HashMap
 import kotlin.random.Random.Default.nextInt
 
 
@@ -53,8 +53,10 @@ import kotlin.random.Random.Default.nextInt
 
 class HardenedEventListener : Listener {
 
-    private var debugconfig = YamlConfiguration.loadConfiguration(File(getInstance().dataFolder, "debug.yml"))
+    private var debugconfig = YamlConfiguration.loadConfiguration(File(getInstance().dataFolder, "config.yml"))
     private var debugmode = debugconfig.getBoolean("debug-mode")
+    private var jagangducheon = debugconfig.getBoolean("jagang-ducheon")
+    private var monsterdmg = debugconfig.getInt("monster-damage")
 
     fun getMsgTask() {
         if (debugmode) {
@@ -72,7 +74,7 @@ class HardenedEventListener : Listener {
                     it.sendMessage(Component.text().content("${ChatColor.MAGIC}???${ChatColor.RESET}: 음, 그가 모든 시련을 이겨낸다면?").build())
                     it.sendMessage(Component.text().content("${ChatColor.MAGIC}???${ChatColor.RESET}: 너무한거 아니야? 이정도로 심하게 시련을 준다고?").build())
                     it.sendMessage(Component.text().content("${ChatColor.MAGIC}???${ChatColor.RESET}: 난 그에게 시련만 주는 것이 아니야. 아직 그에게 줄 사랑이 남아있어.\n").build())
-                    it.sendMessage(Component.text().content("스포일러 #1: K5WXINCMLBYE4WSHGFLUYVCRM4======").build())
+                    it.sendMessage(Component.text().content("스포일러 #1: JZKTK4SWIVDG2Y2UNB4U6VCBHU======").build())
                 }
             }, 20 * 60 * 5)
         } else {
@@ -110,8 +112,6 @@ class HardenedEventListener : Listener {
 
     private val timestamps = HashMap<UUID, Long>()
 
-    private var killdragon = 0
-
     private var deathcount = 0
 
     @EventHandler
@@ -125,19 +125,46 @@ class HardenedEventListener : Listener {
     @EventHandler
     fun onPlayerJoinEvent(e: PlayerJoinEvent) {
         e.joinMessage(Component.text().color(TextColor.color(0xffff00)).content("${e.player.name}님이 멸망해가는 세계에서 생존하기 위해 참여하였습니다.").build())
-        if (e.player.uniqueId.toString() == "389c4c9b-6342-42fc-beb3-922a7d7a72f9" || e.player.uniqueId.toString() == "5082c832-7f7c-4b04-b0c7-2825062b7638") {
-            getMsgTask()
+        if (debugmode) {
+            if (e.player.uniqueId.toString() == debugconfig.getString("play-uuid")) {
+                getMsgTask()
+            }
+            else {
+                e.player.gameMode = GameMode.SPECTATOR
+                e.joinMessage(Component.text().color(TextColor.color(0xffff00)).content("${e.player.name}님이 디버깅된 월드에 관심이 생깁니다.").build())
+            }
         }
         else {
-            e.player.gameMode = GameMode.SPECTATOR
+            if (e.player.uniqueId.toString() == "389c4c9b-6342-42fc-beb3-922a7d7a72f9" || e.player.uniqueId.toString() == "5082c832-7f7c-4b04-b0c7-2825062b7638") {
+                if (!e.player.hasPlayedBefore()) {
+                    Bukkit.getOnlinePlayers().forEach {
+                        it.sendTitle("", "\"멸망해가는 세계, 그곳에서 생존하기 위해 나타난 한 사람.\"", 0, 150, 0)
+                    }
+                }
+                getMsgTask()
+            } else {
+                e.player.gameMode = GameMode.SPECTATOR
+                e.joinMessage(
+                    Component.text().color(TextColor.color(0xffff00)).content("${e.player.name}님이 그의 여정에 관심이 생깁니다.").build())
+            }
         }
     }
 
     @EventHandler
     fun onPlayerQuitEvent(e: PlayerQuitEvent) {
-        e.quitMessage(Component.text().color(TextColor.color(0xffff00)).content("${e.player.name}은 이 멸망해가는 세계에서 떠났다.").build())
-        if (e.player.uniqueId.toString() == "389c4c9b-6342-42fc-beb3-922a7d7a72f9" || e.player.uniqueId.toString() == "5082c832-7f7c-4b04-b0c7-2825062b7638") {
-            getScheduler().cancelTasks(getInstance())
+        if (debugmode) {
+            if (e.player.uniqueId.toString() == debugconfig.getString("play-uuid")) {
+                getScheduler().cancelTasks(getInstance())
+            }
+            else {
+                e.quitMessage(Component.text().color(TextColor.color(0xffff00)).content("${e.player.name}은 이 디버깅된 세계에서 떠났다.").build())
+            }
+        }
+        else {
+            e.quitMessage(Component.text().color(TextColor.color(0xffff00)).content("${e.player.name}은 이 멸망해가는 세계에서 떠났다.").build())
+            if (e.player.uniqueId.toString() == "389c4c9b-6342-42fc-beb3-922a7d7a72f9" || e.player.uniqueId.toString() == "5082c832-7f7c-4b04-b0c7-2825062b7638") {
+                getScheduler().cancelTasks(getInstance())
+            }
         }
     }
 
@@ -149,27 +176,33 @@ class HardenedEventListener : Listener {
         if (deathcount == 100) {
             Bukkit.getOnlinePlayers().forEach {
                 it.sendTitle("", "${ChatColor.RED}\"끝없는 도전, 끝없는 용기 만큼은 인정한다.", 0, 150, 0)
-                it.sendMessage(Component.text().color(TextColor.color(0x808080)).content("방금전 그들의 말은 당신에게 큰 시련을 주는 것을 포기하였다. 앞으로의 시련이 줄기를 빈다.").build())
+                it.sendMessage(Component.text().color(TextColor.color(0x808080)).content("방금 전 그들의 말은 당신에게 큰 시련을 계속 주는 것을 포기하였다. 앞으로의 시련이 줄기를 빈다.").build())
                 it.sendMessage(Component.text().content("스포일러 #2: 포기는 누가 먼저 했지? 내 앞에는 영원히 빛나는 빛이 있어."))
             }
         }
 
         getScheduler().runTaskLater(getInstance(), Runnable {
-            if (nextInt(4) == 0) {
-                e.entity.player?.kick(Component.text().color(TextColor.color(0x8b0000)).content("그만 포기해. 나도 포기했어.").build())
-                e.entity.player?.uniqueId?.lastkicked = System.currentTimeMillis()
-            }
-            if (nextInt(4) == 1) {
-                e.entity.player?.kick(Component.text().color(TextColor.color(0x8b0000)).content("진짜 그게 되겠니?").build())
-                e.entity.player?.uniqueId?.lastkicked = System.currentTimeMillis()
-            }
-            if (nextInt(4) == 2) {
-                e.entity.player?.kick(Component.text().color(TextColor.color(0x8b0000)).content("넌 이 고통속에서 살아갈 수 밖에 없는 존재야.").build())
-                e.entity.player?.uniqueId?.lastkicked = System.currentTimeMillis()
-            }
-            if (nextInt(4) == 3) {
-                e.entity.player?.kick(Component.text().color(TextColor.color(0x8b0000)).content("하하. 꺼저버려.").build())
-                e.entity.player?.uniqueId?.lastkicked = System.currentTimeMillis()
+            when {
+                nextInt(4) == 0 -> {
+                    e.entity.player?.kick(Component.text().color(TextColor.color(0x8b0000)).content("그만 포기해. 나도 포기했어.").build())
+                    e.entity.player?.uniqueId?.lastkicked = System.currentTimeMillis()
+                }
+                nextInt(4) == 1 -> {
+                    e.entity.player?.kick(Component.text().color(TextColor.color(0x8b0000)).content("진짜 그게 되겠니?").build())
+                    e.entity.player?.uniqueId?.lastkicked = System.currentTimeMillis()
+                }
+                nextInt(4) == 2 -> {
+                    e.entity.player?.kick(Component.text().color(TextColor.color(0x8b0000)).content("넌 이 고통속에서 살아갈 수 밖에 없는 존재야.").build())
+                    e.entity.player?.uniqueId?.lastkicked = System.currentTimeMillis()
+                }
+                nextInt(4) == 3 -> {
+                    e.entity.player?.kick(Component.text().color(TextColor.color(0x8b0000)).content("하하. 꺼저버려.").build())
+                    e.entity.player?.uniqueId?.lastkicked = System.currentTimeMillis()
+                }
+                else -> {
+                    e.entity.player?.kick(Component.text().color(TextColor.color(0x8b0000)).content("넌 가망이 없어.").build())
+                    e.entity.player?.uniqueId?.lastkicked = System.currentTimeMillis()
+                }
             }
         }, 35)
     }
@@ -177,17 +210,22 @@ class HardenedEventListener : Listener {
     @EventHandler
     fun onLoginEvent(e: AsyncPlayerPreLoginEvent) {
         if (System.currentTimeMillis() - e.uniqueId.lastkicked < 10000) {
-            if (nextInt(4) == 0) {
-                e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_FULL, Component.text().color(TextColor.color(0x8b0000)).content("다시 하려고? 아니, 넌 글렀어.").build())
-            }
-            if (nextInt(4) == 1) {
-                e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_FULL, Component.text().color(TextColor.color(0x8b0000)).content("왜 계속 도전하는 건지 나는 이해를 못하겠어.").build())
-            }
-            if (nextInt(4) == 2) {
-                e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_FULL, Component.text().color(TextColor.color(0x8b0000)).content("다른 할일이 있지 않아?").build())
-            }
-            if (nextInt(4) == 3) {
-                e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_FULL, Component.text().color(TextColor.color(0x8b0000)).content("그만해. 나도 이제 지친다.").build())
+            when {
+                nextInt(4) == 0 -> {
+                    e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_FULL, Component.text().color(TextColor.color(0x8b0000)).content("다시 하려고? 아니, 넌 글렀어.").build())
+                }
+                nextInt(4) == 1 -> {
+                    e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_FULL, Component.text().color(TextColor.color(0x8b0000)).content("왜 계속 도전하는 건지 나는 이해를 못하겠어.").build())
+                }
+                nextInt(4) == 2 -> {
+                    e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_FULL, Component.text().color(TextColor.color(0x8b0000)).content("다른 할일이 있지 않아?").build())
+                }
+                nextInt(4) == 3 -> {
+                    e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_FULL, Component.text().color(TextColor.color(0x8b0000)).content("그만해. 나도 이제 지친다.").build())
+                }
+                else -> {
+                    e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_FULL, Component.text().color(TextColor.color(0x8b0000)).content("지금 도전 해봤자 큰 의미가 있을까?").build())
+                }
             }
         }
     }
@@ -218,22 +256,43 @@ class HardenedEventListener : Listener {
         val dmgr = e.damager
         val d = e.finalDamage
 
-        if (dmgr is Player) {
-            dmgr.damage(d)
+        fun ducheon() {
+            if (dmgr is Player) {
+                dmgr.damage(d)
+            }
+
+            if (dmgr is Arrow) {
+                val arrowsrc = dmgr.shooter as? Player ?: return
+                arrowsrc.damage(d)
+            }
+
+            if (dmgr is Trident) {
+                val tridentsrc = dmgr.shooter as? Player ?: return
+                tridentsrc.damage(d)
+            }
         }
 
-        if (dmgr is Arrow) {
-            val arrowsrc = dmgr.shooter as? Player ?: return
-            arrowsrc.damage(d)
+        if (debugmode) {
+            if (jagangducheon) {
+                ducheon()
+            }
+            else {
+                getLogger().info("Currently JagangDucheon is disabled because of debug config.")
+            }
+        }
+        else {
+            ducheon()
         }
 
-        if (dmgr is Trident) {
-            val tridentsrc = dmgr.shooter as? Player ?: return
-            tridentsrc.damage(d)
+        if (debugmode) {
+            if (dmgr is Monster) {
+                e.damage = e.damage * monsterdmg
+            }
         }
-
-        if (dmgr is Monster) {
-            e.damage = e.damage * 3
+        else {
+                if (dmgr is Monster) {
+                e.damage = e.damage * 3
+            }
         }
     }
 
@@ -256,20 +315,8 @@ class HardenedEventListener : Listener {
             }
             getScheduler().scheduleSyncRepeatingTask(getInstance(), EndingScheduler(), 20, 20)
         }
-
         if (entity.type == EntityType.ENDER_DRAGON) {
-            if (killdragon == 0) {
                 dragonEnd()
-                killdragon++
-            }
-            if (killdragon == 1) {
-                Bukkit.getOnlinePlayers().forEach {
-                    it.sendTitle("", "${ChatColor.GRAY}\"과연 이것이 진정 옳은 값이었을까?\"", 0, 150, 0)
-                    it.sendMessage(Component.text().color(TextColor.color(0x808080)).content("끝없이 시도하라. 끝없이 도전하라. 비록, 그것이 옳은 값으로 되돌려 받지 못하더라도.").build())
-                    it.sendMessage(Component.text().content("이스터에그 #2: 안녕히. 그리고 한번 더."))
-                    dragonEnd()
-                }
-            }
         }
     }
 }

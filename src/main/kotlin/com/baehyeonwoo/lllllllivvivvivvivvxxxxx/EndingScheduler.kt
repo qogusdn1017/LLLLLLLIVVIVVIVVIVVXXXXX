@@ -147,7 +147,7 @@ class EndingScheduler : Runnable {
                 Bukkit.getOnlinePlayers().forEach {
                     it.sendMessage(Component.text().content("LLLLLLLIVVIVVIVVIVVXXXXX Plugin").build())
                     it.sendMessage(Component.text().content("by BaeHyeonWoo\n").build())
-                    it.sendMessage(Component.text().content("소셜:\n").build())
+                    it.sendMessage(Component.text().content("제작자 소셜:\n").build())
                     it.sendMessage(Component.text().content("Twitter: @qogusdn1017").build())
                     it.sendMessage(Component.text().content("GitHub: https://github.com/qogusdn1017\n").build())
                     it.sendMessage(Component.text().content("특별히 감사한 분들:\n").build())
@@ -164,6 +164,7 @@ class EndingScheduler : Runnable {
                     it.removePotionEffect(PotionEffectType.LEVITATION)
                     Bukkit.getScheduler().cancelTasks(getInstance())
                     HandlerList.unregisterAll(getInstance())
+                    Bukkit.getPluginManager().registerEvents(REEndListener(), getInstance())
                 }
             }
         }

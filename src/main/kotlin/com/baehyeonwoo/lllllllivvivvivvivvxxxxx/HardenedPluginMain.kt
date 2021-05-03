@@ -41,7 +41,7 @@ class HardenedPluginMain : JavaPlugin() {
         // DEBUG CONFIG
 
         saveDefaultConfig()
-        val config = YamlConfiguration.loadConfiguration(File(dataFolder, "debug.yml"))
+        val config = YamlConfiguration.loadConfiguration(File(dataFolder, "config.yml"))
         val debugmode = config.getBoolean("debug-mode")
 
         for (world in Bukkit.getWorlds()) {
