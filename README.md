@@ -23,7 +23,7 @@ Challenging survival for komq.
 
 #### Required programs
 
-- To build and run this plugin, JDK11 is required. I prefer [AdpotOpenJDK](https://adoptopenjdk.net).
+- To build and run this plugin, JDK11 is required. I prefer [AdoptOpenJDK](https://adoptopenjdk.net).
 - To run the server, [Paper](https://papermc.io/) is required. (Directly download it's latest 1.16.5 release from [Here](https://papermc.io/api/v1/paper/1.16.5/laetst/download).)
 
 #### Depend plugins
