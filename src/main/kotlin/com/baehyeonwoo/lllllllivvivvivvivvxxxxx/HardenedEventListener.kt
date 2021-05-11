@@ -162,7 +162,7 @@ class HardenedEventListener : Listener {
         }
         else {
             e.quitMessage(Component.text().color(TextColor.color(0xffff00)).content("${e.player.name}은 이 멸망해가는 세계에서 떠났다.").build())
-            if (e.player.uniqueId.toString() == "389c4c9b-6342-42fc-beb3-922a7d7a72f9" || e.player.uniqueId.toString() == "5082c832-7f7c-4b04-b0c7-2825062b7638") {
+            if (e.player.uniqueId.toString() == "389c4c9b-6342-42fc-beb3-922a7d7a72f9") {
                 getScheduler().cancelTasks(getInstance())
             }
         }
