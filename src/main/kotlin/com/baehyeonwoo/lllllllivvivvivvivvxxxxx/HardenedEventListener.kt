@@ -135,7 +135,7 @@ class HardenedEventListener : Listener {
             }
         }
         else {
-            if (e.player.uniqueId.toString() == "389c4c9b-6342-42fc-beb3-922a7d7a72f9" || e.player.uniqueId.toString() == "5082c832-7f7c-4b04-b0c7-2825062b7638") {
+            if (e.player.uniqueId.toString() == "389c4c9b-6342-42fc-beb3-922a7d7a72f9") {
                 if (!e.player.hasPlayedBefore()) {
                     Bukkit.getOnlinePlayers().forEach {
                         it.sendTitle("", "\"멸망해가는 세계, 그곳에서 생존하기 위해 나타난 한 사람.\"", 0, 150, 0)
@@ -162,7 +162,7 @@ class HardenedEventListener : Listener {
         }
         else {
             e.quitMessage(Component.text().color(TextColor.color(0xffff00)).content("${e.player.name}은 이 멸망해가는 세계에서 떠났다.").build())
-            if (e.player.uniqueId.toString() == "389c4c9b-6342-42fc-beb3-922a7d7a72f9" || e.player.uniqueId.toString() == "5082c832-7f7c-4b04-b0c7-2825062b7638") {
+            if (e.player.uniqueId.toString() == "389c4c9b-6342-42fc-beb3-922a7d7a72f9") {
                 getScheduler().cancelTasks(getInstance())
             }
         }
