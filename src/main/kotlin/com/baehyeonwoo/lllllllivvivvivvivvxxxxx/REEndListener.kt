@@ -63,7 +63,8 @@ class REEndListener : Listener {
             }
             Bukkit.getScheduler().scheduleSyncRepeatingTask(getInstance(), ReEndTask(), 20, 20)
         }
-
+        
+        if (entity.type == EntityType.ENDER_DRAGON) {
         Bukkit.getOnlinePlayers().forEach {
             it.sendTitle("", "${ChatColor.GRAY}\"과연 이것이 진정 옳은 값을 되돌려 받을 수 있었을까?\"", 0, 150, 0)
             it.sendMessage(
@@ -72,6 +73,7 @@ class REEndListener : Listener {
             )
             it.sendMessage(Component.text().content("이스터에그 #2: 안녕히. 그리고 한번 더."))
             ReEnd()
+            }
         }
     }
 }
