@@ -13,6 +13,8 @@ Challenging survival for komq.
 
 - [PatrickKR](https://github.com/patrick-mc), who helped me with the code. Click on the name to view his GitHub.
 
+- [aroxu](https://github.com/aroxu), who helped me at final code. Click on the name to view his GitHub.
+
 - [Twitter Users](https://twitter.com/qogusdn1017/followers), who waited and encouraged me to finish this project. Click on the name to view my followers I love.
 
 ## Download
