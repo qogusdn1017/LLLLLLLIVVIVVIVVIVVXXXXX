@@ -15,4 +15,14 @@
 debug-mode: false
 monster-damage: 5
 jagang-ducheon: true
-play-uuid: "389c4c9b-6342-42fc-beb3-922a7d7a72f9"
+
+# Change the play-uuid in order to change player.
+# You can use multiple players by adding like this:
+#
+# play-uuid:
+# - "389c4c9b-6342-42fc-beb3-922a7d7a72f9"
+# - "5082c832-7f7c-4b04-b0c7-2825062b7638"
+#
+play-uuid:
+  - "389c4c9b-6342-42fc-beb3-922a7d7a72f9"
+  - "5082c832-7f7c-4b04-b0c7-2825062b7638"

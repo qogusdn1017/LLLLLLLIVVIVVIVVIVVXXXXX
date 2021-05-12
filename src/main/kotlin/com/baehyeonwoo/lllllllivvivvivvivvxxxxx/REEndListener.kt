@@ -24,6 +24,7 @@ import org.bukkit.ChatColor
 import org.bukkit.Color
 import org.bukkit.FireworkEffect
 import org.bukkit.block.data.type.Bed
+import org.bukkit.entity.EntityType
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -67,10 +68,7 @@ class REEndListener : Listener {
         if (entity.type == EntityType.ENDER_DRAGON) {
         Bukkit.getOnlinePlayers().forEach {
             it.sendTitle("", "${ChatColor.GRAY}\"과연 이것이 진정 옳은 값을 되돌려 받을 수 있었을까?\"", 0, 150, 0)
-            it.sendMessage(
-                Component.text().color(TextColor.color(0x808080))
-                    .content("끝없이 시도하라. 끝없이 도전하라. 비록, 그것이 옳은 값으로 되돌려 받지 못하더라도.").build()
-            )
+            it.sendMessage(Component.text().color(TextColor.color(0x808080)).content("끝없이 시도하라. 끝없이 도전하라. 비록, 그것이 옳은 값으로 되돌려 받지 못하더라도.").build())
             it.sendMessage(Component.text().content("이스터에그 #2: 안녕히. 그리고 한번 더."))
             ReEnd()
             }

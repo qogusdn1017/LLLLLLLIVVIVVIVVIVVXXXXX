@@ -19,6 +19,7 @@ package com.baehyeonwoo.lllllllivvivvivvivvxxxxx.debugcommands
 import com.baehyeonwoo.lllllllivvivvivvivvxxxxx.EndingScheduler
 import com.baehyeonwoo.lllllllivvivvivvivvxxxxx.HardenedEventListener
 import com.baehyeonwoo.lllllllivvivvivvivvxxxxx.HardenedPluginMain
+import net.kyori.adventure.sound.SoundStop
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextColor
 import org.bukkit.Bukkit
@@ -35,10 +36,11 @@ import org.bukkit.event.HandlerList
 import org.bukkit.plugin.Plugin
 import java.io.File
 
-class LVXCommands : CommandExecutor, TabCompleter {
 
-    private var debugconfig = YamlConfiguration.loadConfiguration(File(getInstance().dataFolder, "config.yml"))
-    private var debugmode = debugconfig.getBoolean("debug-mode")
+class LVXCommands : CommandExecutor, TabCompleter {
+    private val task = Bukkit.getScheduler().scheduleSyncRepeatingTask(getInstance(), EndingScheduler(), 20, 20)
+    private var config = YamlConfiguration.loadConfiguration(File(getInstance().dataFolder, "config.yml"))
+    private var debugmode = config.getBoolean("debug-mode")
 
     private fun getInstance(): Plugin {
         return HardenedPluginMain.instance
@@ -55,6 +57,9 @@ class LVXCommands : CommandExecutor, TabCompleter {
                     if (debugmode) {
                         args[0].let { vp ->
                             when (vp) {
+                                "playerlist" -> {
+                                    sender.sendMessage(config.getStringList("play-uuid").toString())
+                                }
                                 "checkdebug" -> {
                                     sender.sendMessage("The debug mode is properly enabled.")
                                 }
@@ -63,23 +68,23 @@ class LVXCommands : CommandExecutor, TabCompleter {
                                         it.playSound(it.location, "komq.ending", SoundCategory.MASTER , 10000F, 1F)
                                         it.playSound(it.location, Sound.ENTITY_ENDER_DRAGON_DEATH, SoundCategory.MASTER , 10000F, 1F)
                                         it.playSound(it.location, Sound.UI_TOAST_CHALLENGE_COMPLETE, SoundCategory.MASTER , 10000F, 1F)
-                                        it.stopSound("komq.ending", SoundCategory.MASTER)
-                                        it.stopSound(Sound.ENTITY_ENDER_DRAGON_DEATH, SoundCategory.MASTER)
-                                        it.stopSound(Sound.UI_TOAST_CHALLENGE_COMPLETE, SoundCategory.MASTER)
-
+                                        Bukkit.getScheduler().runTaskLater(getInstance(), Runnable {
+                                            it.stopSound(SoundStop.all())
+                                        }, 40)
                                         sender.sendMessage("Resx check progress is done.")
                                     }
                                 }
                                 "cancelallscheduler" -> {
-                                    sender.sendMessage("Cancelled all scheduled tasks.")
                                     Bukkit.getScheduler().cancelTasks(getInstance())
+                                    sender.sendMessage("Cancelled all scheduled tasks.")
                                 }
                                 "ending" -> {
-                                    val task = Bukkit.getScheduler().scheduleSyncRepeatingTask(getInstance(), EndingScheduler(), 20, 20)
-
                                     if (Bukkit.getScheduler().isCurrentlyRunning(task)) {
                                         sender.sendMessage("Cancelling original task first due to prevent bugs.")
                                         Bukkit.getScheduler().cancelTask(task)
+                                        Bukkit.getOnlinePlayers().forEach {
+                                            it.stopSound(SoundStop.all())
+                                        }
                                         sender.sendMessage("Cancelled original task. Enabling ending.")
                                         Bukkit.getScheduler().scheduleSyncRepeatingTask(getInstance(), EndingScheduler(), 20, 20)
                                     }
@@ -89,11 +94,12 @@ class LVXCommands : CommandExecutor, TabCompleter {
                                     }
                                 }
                                 "stopending" -> {
-                                    val task = Bukkit.getScheduler().scheduleSyncRepeatingTask(getInstance(), EndingScheduler(), 20, 20)
-
-                                    if (Bukkit.getScheduler().isCurrentlyRunning(task)) {
-                                        sender.sendMessage("Cancelling ending task.")
-                                        Bukkit.getScheduler().cancelTask(task)
+                                    if (Bukkit.getScheduler().isQueued(task)) {
+                                        sender.sendMessage("Cancelling ending task.\nNote that cancelTask method is not working so the plugin is using cancelTasks.")
+                                        Bukkit.getScheduler().cancelTasks(getInstance())
+                                        Bukkit.getOnlinePlayers().forEach {
+                                            it.stopSound(SoundStop.all())
+                                        }
                                     }
                                     else {
                                         sender.sendMessage(Component.text().color(TextColor.color(0xff0000)).content("BUT THERE WAS NO TASK LEFT TO STOP TO.").build())
@@ -104,39 +110,25 @@ class LVXCommands : CommandExecutor, TabCompleter {
                                     sender.sendMessage("Starting MsgTask.")
                                 }
                                 "event" -> {
-                                    val event = HandlerList.getRegisteredListeners(getInstance()).toArray().contains(HardenedEventListener())
-                                    if (event) {
-                                        sender.sendMessage(Component.text().color(TextColor.color(0xff0000)).content("BUT THE EVENTLISTENER WAS ALREADY ENABLED.").build())
-                                    }
-                                    else {
                                         sender.sendMessage("Registering EventListener.")
                                         Bukkit.getPluginManager().registerEvents(HardenedEventListener(), getInstance())
-                                    }
                                 }
                                 "cancelevent" -> {
-                                    val eventlists = HandlerList.getRegisteredListeners(getInstance())
-                                    if (!eventlists.toArray().contains(HardenedEventListener())) {
-                                        sender.sendMessage(Component.text().color(TextColor.color(0xff0000)).content("BUT THERE WAS NO EVENTLISTENER TO STOP TO.").build())
-                                    }
-                                    else {
                                         sender.sendMessage("Stopping EventListener.")
                                         HandlerList.unregisterAll(getInstance())
-                                    }
                                 }
-                                else -> sender.sendMessage("${ChatColor.RED}/lvx checkdebug | checkresx | cancelallscheduler | ending | stopending | msgtask | event | cancelevent")
+                                else -> sender.sendMessage("${ChatColor.RED}/lvx checkdebug | playerlist | checkresx | cancelallscheduler | ending | stopending | msgtask | event | cancelevent")
                             }
                         }
                     }
-                    else {
-                        sender.sendMessage("${ChatColor.RED}You cannot perform this action unless debug mode is enabled. Please enable debug-mode in \"config.yml.\"")
-                    }
+                    sender.sendMessage("${ChatColor.RED}/lvx checkdebug | playerlist | checkresx | cancelallscheduler | ending | stopending | msgtask | event | cancelevent")
                 }
                 else {
                     sender.sendMessage("${ChatColor.RED}You don't have permission to perform this command.")
                 }
             }
             else {
-                sender.sendMessage("${ChatColor.RED}/lvx checkdebug | checkresx | cancelallscheduler | ending | stopending | msgtask | event | cancelevent")
+                sender.sendMessage("${ChatColor.RED}/lvx checkdebug | playerlist | checkresx | cancelallscheduler | ending | stopending | msgtask | event | cancelevent")
             }
         }
         else {
