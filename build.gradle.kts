@@ -1,38 +1,58 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
-    kotlin("jvm") version "1.4.32"
-    id("com.github.johnrengelman.shadow") version "6.1.0"
+    kotlin("jvm") version "1.6.10"
 }
 
 repositories {
     mavenCentral()
-    maven("https://papermc.io/repo/repository/maven-public/") // PaperMC Repo
-    maven("https://jitpack.io/") // Tap
+    maven("https://papermc.io/repo/repository/maven-public/")
 }
 
 dependencies {
-    implementation(kotlin("stdlib")) // Kotlin
-    implementation("com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT") // Paper
-    implementation("com.github.monun:tap:3.4.2") // Tap
+    compileOnly(kotlin("stdlib"))
+    compileOnly("io.papermc.paper:paper-api:1.18.1-R0.1-SNAPSHOT")
+    compileOnly("io.github.monun:kommand-api:${project.properties["kommandVersion"]}")
+    compileOnly("io.github.monun:tap-api:${project.properties["tapVersion"]}")
 }
 
 tasks {
-    compileJava {
-        options.encoding = "UTF-8"
-    }
-    compileKotlin {
-        kotlinOptions.jvmTarget = "11"
+    withType<KotlinCompile> {
+        kotlinOptions.jvmTarget = JavaVersion.VERSION_17.toString()
     }
     processResources {
         filesMatching("**/*.yml") {
             expand(project.properties)
         }
+        filteringCharset = "UTF-8"
     }
-    shadowJar {
-        archiveClassifier.set("dist")
+    register<Jar>("outputJar") {
+        archiveBaseName.set(project.name)
+        archiveClassifier.set("")
         archiveVersion.set("")
+
+        from(sourceSets["main"].output)
+
+        doLast {
+            copy {
+                from(archiveFile)
+                into("./")
+            }
+        }
     }
-    create<Copy>("dist") {
-        from (shadowJar)
-        into(".\\")
+    register<Jar>("paperJar") {
+        archiveBaseName.set(project.name)
+        archiveClassifier.set("")
+        archiveVersion.set("")
+
+        from(sourceSets["main"].output)
+
+        doLast {
+            copy {
+                from(archiveFile)
+                val plugins = File(rootDir, ".server/plugins/")
+                into(if (File(plugins, archiveFileName.get()).exists()) File(plugins, "update") else plugins)
+            }
+        }
     }
 }
